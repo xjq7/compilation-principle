@@ -1,8 +1,13 @@
-// 状态机状态定义, 过度状态不是最终状态，自动生成数字
 enum DfaState {
   Initial,
   Int1,
   Int2,
+  String1,
+  String2,
+  String3,
+  String4,
+  String5,
+  StringLiteral1,
 
   Assignment = 'Assignment',
 
@@ -13,12 +18,12 @@ enum DfaState {
   IntLiteral = 'IntLiteral',
   Id = 'Id',
   Int = 'Int',
+  String = 'String',
+  StringLiteral = 'StringLiteral',
 }
 
 class Token {
-  // token 附加字段，比如 IntLiteral 需要额外存储数据
   text?: string;
-  // 状态类别，对应状态机中的终结状态
   type: DfaState;
 
   constructor(type: DfaState, text?: string) {
@@ -43,11 +48,8 @@ export function tokenize(str: string) {
   let state: DfaState = DfaState.Initial;
 
   const tokens: Token[] = [];
-
-  // 临时变量， 用于存储一些字面量字符
   let text = '';
 
-  // 每次解析完一个 token 后需要重置 状态 跟临时变量
   const push = function (...items: Token[]) {
     text = '';
     state = DfaState.Initial;
@@ -58,11 +60,12 @@ export function tokenize(str: string) {
     const ch = str[i];
 
     switch (state) {
-      // 初始状态
       case DfaState.Initial:
         if (isAlpha(ch)) {
           if (ch === 'i') {
             state = DfaState.Int1;
+          } else if (ch === 's') {
+            state = DfaState.String1;
           } else {
             state = DfaState.Id;
           }
@@ -76,7 +79,10 @@ export function tokenize(str: string) {
           push(new Token(DfaState.Plus));
         } else if (ch === '*') {
           push(new Token(DfaState.Star));
+        } else if (ch === '"') {
+          state = DfaState.StringLiteral1;
         }
+
         break;
       case DfaState.Int1:
         if (ch === 'n') {
