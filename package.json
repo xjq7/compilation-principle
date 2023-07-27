@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "ts-node test.ts"
+    "token1": "ts-node token1/test.ts",
+    "token2": "ts-node token2/test.ts"
   },
   "repository": {
     "type": "git",
