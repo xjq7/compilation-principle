@@ -1,2 +1,3 @@
 node_modules
 lex.yy.c
+.antlr/

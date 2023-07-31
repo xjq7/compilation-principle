@@ -12,6 +12,9 @@ dependencies:
     version: 1.6.10
 
 devDependencies:
+  '@types/node':
+    specifier: ^20.4.5
+    version: 20.4.5
   ts-node:
     specifier: ^10.9.1
     version: 10.9.1(@types/node@20.4.5)(typescript@5.1.6)
