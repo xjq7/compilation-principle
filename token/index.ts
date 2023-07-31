@@ -1,176 +1,47 @@
-enum DfaState {
-  Initial,
-  Int1,
-  Int2,
-  Bool1,
-  Bool2,
-  Bool3,
+import Tokenizr from 'tokenizr';
+import fs from 'fs';
 
-  IntLiteral1,
+let lexer = new Tokenizr();
 
-  Assignment = 'Assignment',
+lexer.rule(/let|const/, (ctx, match) => {
+  ctx.accept('variable');
+});
 
-  Plus = 'Plus',
-  Star = 'Star',
+lexer.rule(/\*/, (ctx, match) => {
+  ctx.accept('star');
+});
 
-  GT = 'GT',
-  GE = 'GE',
+lexer.rule(/\+/, (ctx, match) => {
+  ctx.accept('plus');
+});
 
-  SemiColon = 'SemiColon',
-  IntLiteral = 'IntLiteral',
-  Id = 'Id',
-  Int = 'Int',
-  Bool = 'Bool',
-}
+lexer.rule(/=/, (ctx, match) => {
+  ctx.accept('assignment');
+});
 
-export class Token {
-  text?: string;
-  type: DfaState;
+lexer.rule(/;/, (ctx, match) => {
+  ctx.accept('semi');
+});
 
-  constructor(type: DfaState, text?: string) {
-    if (text) this.text = text;
-    this.type = type;
-  }
-}
+lexer.rule(/[0-9]+/, (ctx, match) => {
+  ctx.accept('number', parseInt(match[0]));
+});
 
-function isAlpha(ch: string) {
-  return /[a-z]/i.test(ch);
-}
+lexer.rule(/[a-zA-Z_][a-zA-Z0-9_]*/, (ctx, match) => {
+  ctx.accept('id');
+});
 
-function isNumber(ch: string) {
-  return /\d/.test(ch);
-}
+lexer.rule(/[ \t\r\n]+/, (ctx, match) => {
+  ctx.ignore();
+});
 
-function isShutDown(ch: string) {
-  return /\s|\n|[;]/.test(ch);
-}
+lexer.rule(/./, (ctx, match) => {
+  ctx.accept('char');
+});
 
-function isIdentifier(ch: string) {
-  return isAlpha(ch) || isNumber(ch);
-}
+let cfg = fs.readFileSync('sample.js', 'utf-8');
 
-export function tokenize(str: string) {
-  let state: DfaState = DfaState.Initial;
-
-  const tokens: Token[] = [];
-  let text = '';
-
-  const push = function (...items: Token[]) {
-    text = '';
-    state = DfaState.Initial;
-    return tokens.push(...items);
-  };
-
-  for (let i = 0; i < str.length; i++) {
-    const ch = str[i];
-
-    switch (state) {
-      case DfaState.Initial:
-        if (isAlpha(ch)) {
-          if (ch === 'i') {
-            state = DfaState.Int1;
-          } else if (ch === 'b') {
-            state = DfaState.Bool1;
-          } else {
-            state = DfaState.Id;
-          }
-          text += ch;
-        } else if (isNumber(ch)) {
-          text += ch;
-          state = DfaState.IntLiteral1;
-        } else if (ch === '=') {
-          push(new Token(DfaState.Assignment));
-        } else if (ch === '+') {
-          push(new Token(DfaState.Plus));
-        } else if (ch === '*') {
-          push(new Token(DfaState.Star));
-        }
-        break;
-      case DfaState.IntLiteral1:
-        if (isShutDown(ch)) {
-          push(new Token(DfaState.IntLiteral, text));
-        }
-        text += ch;
-        break;
-      case DfaState.Int1:
-        if (ch === 'n') {
-          state = DfaState.Int2;
-        } else {
-          state = DfaState.Id;
-        }
-        text += ch;
-        break;
-      case DfaState.Int2:
-        if (ch === 't') {
-          push(new Token(DfaState.Int));
-        } else {
-          state = DfaState.Id;
-          text += ch;
-        }
-        break;
-      case DfaState.Id:
-        if (isShutDown(ch)) {
-          push(new Token(DfaState.Id, text));
-          if (ch === ';') {
-            push(new Token(DfaState.SemiColon));
-          }
-        } else if (isIdentifier(ch)) {
-          text += ch;
-        }
-
-        break;
-      case DfaState.Bool1:
-        if (ch === 'o') {
-          state = DfaState.Bool2;
-          text += ch;
-        } else if (isShutDown(ch)) {
-          push(new Token(DfaState.Id, text));
-          if (ch === ';') {
-            push(new Token(DfaState.SemiColon));
-          }
-        } else if (isIdentifier(ch)) {
-          state = DfaState.Id;
-        }
-        break;
-      case DfaState.Bool2:
-        text += ch;
-        if (ch === 'o') {
-          state = DfaState.Bool3;
-        } else if (isShutDown(ch)) {
-          push(new Token(DfaState.Id, text));
-          if (ch === ';') {
-            push(new Token(DfaState.SemiColon));
-          }
-        } else if (isIdentifier(ch)) {
-          state = DfaState.Id;
-        }
-        break;
-      case DfaState.Bool3:
-        text += ch;
-        if (ch === 'l') {
-          state = DfaState.Bool;
-        } else if (isShutDown(ch)) {
-          push(new Token(DfaState.Id, text));
-          if (ch === ';') {
-            push(new Token(DfaState.SemiColon));
-          }
-        } else if (isIdentifier(ch)) {
-          state = DfaState.Id;
-        }
-        break;
-      case DfaState.Bool:
-        if (isShutDown(ch)) {
-          push(new Token(DfaState.Bool));
-          if (ch === ';') {
-            push(new Token(DfaState.SemiColon));
-          }
-        } else if (isIdentifier(ch)) {
-          text += ch;
-          state = DfaState.Id;
-        }
-        break;
-      default:
-    }
-  }
-  return tokens;
-}
+lexer.input(cfg);
+lexer.tokens().forEach((token) => {
+  console.log(token.toString());
+});

@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "token2": "ts-node token2/test.ts",
     "token1": "ts-node token1/test.ts",
-    "token2": "ts-node token2/test.ts"
+    "token": "ts-node token/index.ts",
+    "ast1": "ts-node ast1/test.ts"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,8 @@
   "devDependencies": {
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "tokenizr": "^1.6.10"
   }
 }
