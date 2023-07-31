@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "token2": "ts-node token2/test.ts",
     "token1": "ts-node token1/test.ts",
