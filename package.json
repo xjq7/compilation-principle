@@ -25,6 +25,8 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "antlr4": "^4.13.0",
+    "pegjs": "^0.10.0",
     "tokenizr": "^1.6.10"
   }
 }
