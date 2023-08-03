@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "token2": "ts-node token2/test.ts",
     "token1": "ts-node token1/test.ts",
@@ -27,8 +26,6 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "antlr4": "^4.13.0",
-    "pegjs": "^0.10.0",
     "tokenizr": "^1.6.10"
   }
 }
