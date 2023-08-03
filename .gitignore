@@ -1,3 +1,5 @@
 node_modules
-lex.yy.c
-.antlr/
+calc.lex.cpp
+calc.tab.cpp
+calc.tab.hpp
+calc
