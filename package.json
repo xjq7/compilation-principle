@@ -7,7 +7,10 @@
     "token2": "ts-node token2/test.ts",
     "token1": "ts-node token1/test.ts",
     "token": "ts-node token/index.ts",
-    "ast1": "ts-node ast1/test.ts"
+    "ast1": "ts-node ast1/test.ts",
+    "ast2": "ts-node ast2/test.ts",
+    "ast3": "ts-node ast3/test.ts",
+    "ast4": "ts-node ast4/test.ts"
   },
   "repository": {
     "type": "git",
