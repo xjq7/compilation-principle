@@ -39,7 +39,7 @@ lexer.rule(/./, (ctx, match) => {
   ctx.accept('char');
 });
 
-let cfg = fs.readFileSync('sample.js', 'utf-8');
+let cfg = fs.readFileSync('./token/sample.js', 'utf-8');
 
 lexer.input(cfg);
 lexer.tokens().forEach((token) => {

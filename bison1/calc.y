@@ -13,14 +13,12 @@ void yyerror(const char* s);
 }
 
 %token<ival> T_INT
-%token T_PLUS T_MINUS T_MULTIPLY T_DIVIDE T_LEFT T_RIGHT
+%token T_PLUS
 %token T_NEWLINE T_QUIT
-%left T_MULTIPLY T_DIVIDE
 %left T_PLUS T_MINUS
 
 %type<ival> expression
 %type<ival> term
-%type<ival> factor
 
 %start calculation
 
@@ -40,6 +38,7 @@ line: T_NEWLINE
 expression: 
   term	{ $$ = $1; }
   | expression T_PLUS term  { $$ = $1 + $3; }
+  | expression T_MINUS term  { $$ = $1 - $3; }
 ;
 term: T_INT  { $$ = $1; }
 ;
