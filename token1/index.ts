@@ -6,9 +6,6 @@ enum DfaState {
 
   Assignment = 'Assignment',
 
-  Plus = 'Plus',
-  Star = 'Star',
-
   SemiColon = 'SemiColon',
   IntLiteral = 'IntLiteral',
   Id = 'Id',
@@ -69,13 +66,9 @@ export function tokenize(str: string) {
           text += ch;
         } else if (isNumber(ch)) {
           text += ch;
-          push(new Token(DfaState.IntLiteral, text));
+          state = DfaState.IntLiteral;
         } else if (ch === '=') {
           push(new Token(DfaState.Assignment));
-        } else if (ch === '+') {
-          push(new Token(DfaState.Plus));
-        } else if (ch === '*') {
-          push(new Token(DfaState.Star));
         }
         break;
       case DfaState.Int1:
@@ -99,6 +92,13 @@ export function tokenize(str: string) {
           push(new Token(DfaState.SemiColon));
         } else if (isBlank(ch)) {
           push(new Token(DfaState.Id, text));
+        }
+        break;
+      case DfaState.IntLiteral:
+        if (isBlank(ch) || ch === ';') {
+          push(new Token(DfaState.IntLiteral, text));
+        } else {
+          text += ch;
         }
         break;
       default:
