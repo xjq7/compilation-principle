@@ -9,11 +9,10 @@
 %%
 
 [ \t]	; // ignore all whitespace
-[0-9]+		{yylval.ival = atoi(yytext); return T_INT;}
-\n		{return T_NEWLINE;}
-"+"		{return T_PLUS;}
-"-"		{return T_MINUS;}
-"exit"		{return T_QUIT;}
-"quit"		{return T_QUIT;}
+[0-9]+		{yylval.ival = atoi(yytext); return INT;}
+\n		{return NEWLINE;}
+"+"		{return PLUS;}
+"-"		{return MINUS;}
+"exit"		{return QUIT;}
 
 %%

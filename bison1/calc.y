@@ -1,4 +1,5 @@
 %{
+// 头文件定义区
 #include <iostream>
 #include <cstdlib>
 using namespace std;
@@ -12,15 +13,13 @@ void yyerror(const char* s);
 	int ival;
 }
 
-%token<ival> T_INT
-%token T_PLUS
-%token T_NEWLINE T_QUIT
-%left T_PLUS T_MINUS
+%token<ival> INT
+%token PLUS MINUS 
+%token NEWLINE QUIT
+
+%left PLUS MINUS
 
 %type<ival> expression
-%type<ival> term
-
-%start calculation
 
 %%
 
@@ -28,20 +27,18 @@ calculation:
 	   | calculation line
 ;
 
-line: T_NEWLINE
-    | expression T_NEWLINE { 
+line: NEWLINE
+    | expression NEWLINE { 
       cout << "\tResult: " << $1 << endl; 
     }
-    | T_QUIT T_NEWLINE { cout << "bye!" << endl; exit(0); }
+    | QUIT NEWLINE { cout << "bye!" << endl; exit(0); }
 ;
 
 expression: 
-  term	{ $$ = $1; }
-  | expression T_PLUS term  { $$ = $1 + $3; }
-  | expression T_MINUS term  { $$ = $1 - $3; }
-;
-term: T_INT  { $$ = $1; }
-;
+  INT	{ $$ = $1; }
+  | expression PLUS INT  { $$ = $1 + $3; }
+  | expression MINUS INT  { $$ = $1 - $3; }
+;  
 
 %%
 
@@ -51,6 +48,6 @@ int main() {
 }
 
 void yyerror(const char* s) {
-	cout << endl << "Parse error: " << s << endl;
+	cout << "Parse error: " << s << endl;
 	exit(1);
 }
