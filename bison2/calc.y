@@ -18,7 +18,7 @@ void yyerror(const char* s);
 
 %left PLUS MINUS MULTIPLY DIVIDE
 
-%type<ival> expression
+%type<ival> exp
 %type<ival> term
 %type<ival> factor
 
@@ -31,16 +31,16 @@ calculation:
 ;
 
 line: NEWLINE
-    | expression NEWLINE { 
+    | exp NEWLINE { 
       cout << "\tResult: " << $1 << endl; 
     }
     | QUIT NEWLINE { cout << "bye!" << endl; exit(0); }
 ;
 
-expression: 
+exp: 
   term	{ $$ = $1; }
-  | expression PLUS term  { $$ = $1 + $3; }
-  | expression MINUS term  { $$ = $1 - $3; }
+  | exp PLUS term  { $$ = $1 + $3; }
+  | exp MINUS term  { $$ = $1 - $3; }
 ;  
 
 term: factor { $$ = $1; } 

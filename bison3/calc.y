@@ -30,7 +30,6 @@ vector<string> cols;
 %token SELECT FROM WHERE ID ASSIGNMENT AND
 %token STRING
 %token NEWLINE QUIT 
-%token COMMA
  
 %type <strval> query table column columns ID conditions condition condition_expr
 %type <strval> factor STRING
@@ -61,14 +60,15 @@ line: NEWLINE
 query: SELECT columns FROM table conditions { }
 ;
 
-table: ID { table = *$1; }
+table: ID { table = *$1;  }
 ;
 
 columns: column
-  | columns COMMA column 
+  | columns ',' column 
+  | '*'
 ;
 
-column: ID { cols.push_back(*$1); }
+column: ID { cols.push_back(*$1); delete $1; }
 ;
 
 conditions:   { $$ = nullptr; }
@@ -79,11 +79,14 @@ condition_expr: condition
   | condition_expr AND condition
 ;
 
-condition: ID ASSIGNMENT factor { 
-  Cond *cond = new Cond(); 
-  cond->attr = *$1;
-  cond->value = *$3;
-  conds.push_back(cond); }
+condition: ID '=' factor { 
+    Cond *cond = new Cond(); 
+    cond->attr = *$1;
+    cond->value = *$3;
+    conds.push_back(cond);
+    delete $1;
+    delete $3; 
+  }
 ;
 
 factor: STRING { $$ = $1; }
