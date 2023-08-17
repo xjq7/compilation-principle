@@ -1,7 +1,7 @@
 import { tokenize } from '.';
 
 const str = `
-  int a = 2;
+  int a = 20;
   int b = 3;
 `;
 

@@ -12,6 +12,9 @@ using namespace std;
 select    {return SELECT;}
 from      {return FROM;}
 exit		  {return QUIT;}
+where     {return WHERE;}
+and       {return AND;}
+\"[^\"\n]+\"      {yylval.strval = new string(yytext);return STRING;}
 [a-zA-Z0-9_][a-zA-Z0-9]+ {
   yylval.strval = new string(yytext);
   return ID;

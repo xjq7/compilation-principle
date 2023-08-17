@@ -16,6 +16,5 @@
 "*"		{return MULTIPLY;}
 "/"		{return DIVIDE;}
 "exit"		{return QUIT;}
-"quit"		{return QUIT;}
 
 %%

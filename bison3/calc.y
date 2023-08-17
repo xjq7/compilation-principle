@@ -49,14 +49,36 @@ line: NEWLINE
 query: SELECT columns FROM table {}
 ;
 
-table: ID { table = *$1; delete $1;}
+table: ID { table = *$1;  }
 ;
 
-columns: column 
+columns: column
   | columns ',' column 
+  | '*'
 ;
 
-column: ID { cols.push_back(*$1); delete $1;}
+column: ID { cols.push_back(*$1); delete $1; }
+;
+
+conditions:   { $$ = nullptr; }
+  | WHERE condition_expr { $$ = $2; }
+;
+
+condition_expr: condition
+  | condition_expr AND condition
+;
+
+condition: ID '=' factor { 
+    Cond *cond = new Cond(); 
+    cond->attr = *$1;
+    cond->value = *$3;
+    conds.push_back(cond);
+    delete $1;
+    delete $3; 
+  }
+;
+
+factor: STRING { $$ = $1; }
 ;
 
 %%
