@@ -11,12 +11,6 @@ extern int yyparse();
 
 void yyerror(const char* s);
 
-struct Cond {
-  string attr;
-  string value;
-};
-
-vector<Cond*> conds;
 string table;
 vector<string> cols;
 
@@ -27,13 +21,10 @@ vector<string> cols;
   int ival;
 }
 
-%token SELECT FROM WHERE ID ASSIGNMENT AND
-%token STRING
+%token SELECT FROM ID
 %token NEWLINE QUIT 
-%token COMMA
  
-%type <strval> query table column columns ID conditions condition condition_expr
-%type <strval> factor STRING
+%type <strval> query table column columns ID
 
 %start calculation
 
@@ -44,49 +35,28 @@ calculation:
 ;
 
 line: NEWLINE
-    | query NEWLINE { 
-      cout << "table:" << table << endl;
+    | query NEWLINE {
+      cout << "table:" << endl << table << endl;
       cout << "columns:" << endl;
       for(string col:cols){
         cout << col << endl; 
       }
-      cout << "conds:" << endl;
-      for(Cond *cd:conds){
-        cout << cd->attr << ':' << cd->value << endl;
-      }
+      cols.clear();
     }
     | QUIT NEWLINE { cout << "bye!" << endl; exit(0); }
 ;
 
-query: SELECT columns FROM table conditions { }
+query: SELECT columns FROM table {}
 ;
 
-table: ID { table = *$1; }
+table: ID { table = *$1; delete $1;}
 ;
 
-columns: column
-  | columns COMMA column 
+columns: column 
+  | columns ',' column 
 ;
 
-column: ID { cols.push_back(*$1); }
-;
-
-conditions:   { $$ = nullptr; }
-  | WHERE condition_expr { $$ = $2; }
-;
-
-condition_expr: condition
-  | condition_expr AND condition
-;
-
-condition: ID ASSIGNMENT factor { 
-  Cond *cond = new Cond(); 
-  cond->attr = *$1;
-  cond->value = *$3;
-  conds.push_back(cond); }
-;
-
-factor: STRING { $$ = $1; }
+column: ID { cols.push_back(*$1); delete $1;}
 ;
 
 %%
