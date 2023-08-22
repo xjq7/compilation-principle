@@ -15,7 +15,7 @@ void yyerror(const char* s);
 
 %union {
   std::string* strval;
-  std::vector<std::string*>* strs;
+  std::vector<std::string>* strs;
   int ival;
 }
 
@@ -39,10 +39,11 @@ line: NEWLINE
 ;
 
 query: SELECT columns FROM table {
-  cout << "table:" << endl << *$4 << endl;
+  cout << "table:" << endl;
+  cout << "\t" << *$4 << endl;
   cout << "columns:" << endl;
-  for(string *col:*$2){
-    cout << *col << endl; 
+  for(string col:*$2){
+    cout << "\t" << col << endl; 
   }
 }
 ;
@@ -50,11 +51,12 @@ query: SELECT columns FROM table {
 table: ID { $$ = $1; }
 ;
 
-columns: column { $$ = new vector<string*>(); $$->push_back($1); }
-  | columns COMMA column { ($1)->push_back($3); $$ = $1; }
+columns: column { $$ = new vector<string>(); $$->push_back(*$1); delete $1; }
+  | columns COMMA column { if($3!=nullptr){($1)->push_back(*$3);}; $$ = $1; delete $3;}
 ;
 
-column: ID { $$ = $1; }
+column: { $$ = nullptr; } 
+  | ID { $$ = $1; }
 ;
 
 %%
