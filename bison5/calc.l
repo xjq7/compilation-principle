@@ -13,10 +13,6 @@
 \n		{return NEWLINE;}
 "+"		{return PLUS;}
 "-"		{return MINUS;}
-"*"		{return MULTIPLY;}
-"/"		{return DIVIDE;}
-"("   {return LPAREN;}
-")"   {return RPAREN;}
 "exit"		{return QUIT;}
 
 %%

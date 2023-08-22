@@ -15,8 +15,6 @@
 "-"		{return MINUS;}
 "*"		{return MULTIPLY;}
 "/"		{return DIVIDE;}
-"("   {return LPAREN;}
-")"   {return RPAREN;}
 "exit"		{return QUIT;}
 
 %%

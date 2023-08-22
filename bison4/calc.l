@@ -13,10 +13,9 @@ select    {return SELECT;}
 from      {return FROM;}
 where     {return WHERE;}
 exit		  {return QUIT;}
-quit		  {return QUIT;}
 and       {return AND;}
-,           {return COMMA;}
-=           {return ASSIGNMENT;}
+,         {return COMMA;}
+=         {return ASSIGNMENT;}
 \"[^\"\n]+\"      {yylval.strval = new string(yytext);return STRING;}
 [a-zA-Z0-9_][a-zA-Z0-9]+ {{
   yylval.strval = new string(yytext);

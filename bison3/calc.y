@@ -11,20 +11,19 @@ extern int yyparse();
 
 void yyerror(const char* s);
 
-string table;
-vector<string> cols;
-
 %}
 
 %union {
-  std::string *strval;
+  std::string* strval;
+  std::vector<std::string*>* strs;
   int ival;
 }
 
-%token SELECT FROM ID
-%token NEWLINE QUIT 
- 
-%type <strval> query table column columns ID
+%token SELECT FROM ID COMMA
+%token NEWLINE QUIT
+
+%type <strval> table column ID
+%type <strs> columns
 
 %start calculation
 
@@ -35,50 +34,27 @@ calculation:
 ;
 
 line: NEWLINE
-    | query NEWLINE {
-      cout << "table:" << endl << table << endl;
-      cout << "columns:" << endl;
-      for(string col:cols){
-        cout << col << endl; 
-      }
-      cols.clear();
-    }
+    | query NEWLINE {  }
     | QUIT NEWLINE { cout << "bye!" << endl; exit(0); }
 ;
 
-query: SELECT columns FROM table {}
-;
-
-table: ID { table = *$1;  }
-;
-
-columns: column
-  | columns ',' column 
-  | '*'
-;
-
-column: ID { cols.push_back(*$1); delete $1; }
-;
-
-conditions:   { $$ = nullptr; }
-  | WHERE condition_expr { $$ = $2; }
-;
-
-condition_expr: condition
-  | condition_expr AND condition
-;
-
-condition: ID '=' factor { 
-    Cond *cond = new Cond(); 
-    cond->attr = *$1;
-    cond->value = *$3;
-    conds.push_back(cond);
-    delete $1;
-    delete $3; 
+query: SELECT columns FROM table {
+  cout << "table:" << endl << *$4 << endl;
+  cout << "columns:" << endl;
+  for(string *col:*$2){
+    cout << *col << endl; 
   }
+}
 ;
 
-factor: STRING { $$ = $1; }
+table: ID { $$ = $1; }
+;
+
+columns: column { $$ = new vector<string*>(); $$->push_back($1); }
+  | columns COMMA column { ($1)->push_back($3); $$ = $1; }
+;
+
+column: ID { $$ = $1; }
 ;
 
 %%

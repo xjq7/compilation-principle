@@ -15,9 +15,9 @@ void yyerror(const char* s);
 %token<ival> INT
 %token PLUS MINUS MULTIPLY DIVIDE
 %token NEWLINE QUIT
-%token LPAREN RPAREN
 
-%left PLUS MINUS MULTIPLY DIVIDE
+%left MULTIPLY DIVIDE
+%left PLUS MINUS
 
 %type<ival> exp
 %type<ival> term
@@ -50,7 +50,7 @@ term: factor { $$ = $1; }
 ;
 
 factor: INT  { $$ = $1; }
-  | LPAREN exp RPAREN { $$ = $2; }
+  | 
 ;
 
 %%
