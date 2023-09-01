@@ -107,7 +107,7 @@ export class AST {
   additive(tokenReader: TokenReader): any {
     let left = this.primary(tokenReader);
 
-    let rootNode: ASTNode | null = left;
+    let root: ASTNode | null = left;
     if (left) {
       const peekToken = tokenReader.peek();
       if (peekToken && peekToken.type === DfaState.Plus) {
@@ -118,12 +118,12 @@ export class AST {
         if (right) {
           node.addChild(left);
           node.addChild(right);
-          rootNode = node;
+          root = node;
         } else {
           throw new Error('无法解析加法表达式!');
         }
       }
     }
-    return rootNode;
+    return root;
   }
 }
