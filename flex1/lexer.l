@@ -15,7 +15,6 @@ int yylval;
 
 %%
 [0-9]+          { yylval = atoi(yytext); return INTEGER; }
-[\+\-\*/\(\)]   { return yytext[0]; }
 [ \t\n]         { /* ignore whitespace */ }
 .               { cerr << "Invalid token: " << yytext << endl; }
 %%

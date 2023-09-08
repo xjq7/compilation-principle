@@ -112,11 +112,11 @@ export class AST {
       while (true) {
         const peekToken = tokenReader.peek();
         if (peekToken && peekToken.type === DfaState.Plus) {
-          const node = new ASTNode(ASTNodeType.AdditiveExpression);
           tokenReader.read();
           const right = this.primary(tokenReader);
 
           if (right) {
+            const node = new ASTNode(ASTNodeType.AdditiveExpression);
             node.addChild(left);
             node.addChild(right);
             // 处理完一个表达式存储为 根节点

@@ -18,7 +18,6 @@ void yyerror(const char* s);
 %token NEWLINE QUIT
 
 %type<ival> expression
-%type<ival> term
 
 %%
 
