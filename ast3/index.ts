@@ -109,18 +109,26 @@ export class AST {
 
     let root: ASTNode | null = left;
     if (left) {
-      const peekToken = tokenReader.peek();
-      if (peekToken && peekToken.type === DfaState.Plus) {
-        const node = new ASTNode(ASTNodeType.AdditiveExpression);
-        tokenReader.read();
-        const right = this.additive(tokenReader);
+      while (true) {
+        const peekToken = tokenReader.peek();
+        if (peekToken && peekToken.type === DfaState.Plus) {
+          const node = new ASTNode(ASTNodeType.AdditiveExpression);
+          tokenReader.read();
+          const right = this.primary(tokenReader);
 
-        if (right) {
-          node.addChild(left);
-          node.addChild(right);
-          root = node;
+          if (right) {
+            node.addChild(left);
+            node.addChild(right);
+            // 处理完一个表达式存储为 根节点
+            root = node;
+            // 保存当前节点为左节点，因为下一轮循环处理还有加法表达式的话
+            // 上一轮处理的根节点会变成这一轮节点的左节点
+            left = root;
+          } else {
+            throw new Error('无法解析加法表达式!');
+          }
         } else {
-          throw new Error('无法解析加法表达式!');
+          break;
         }
       }
     }

@@ -6,6 +6,7 @@ enum ASTNodeType {
   IntLiteral = 'IntLiteral',
   Variable = 'Variable',
   AdditiveExpression = 'AdditiveExpression',
+  MultiplicativeExpression = 'MultiplicativeExpression',
 }
 
 /**
@@ -86,7 +87,7 @@ export class AST {
    * @return {*}
    * @memberof AST
    */
-  primary(tokenReader: TokenReader) {
+  primary(tokenReader: TokenReader): ASTNode | null {
     const peekToken = tokenReader.peek();
     if (peekToken) {
       if (peekToken.type === DfaState.IntLiteral) {
@@ -98,14 +99,49 @@ export class AST {
   }
 
   /**
+   * 乘法表达式解析
+   *
+   * @param {*} tokenReader
+   * @return {*}  {(ASTNode | null)}
+   * @memberof AST
+   */
+  multiplicative(tokenReader: TokenReader): ASTNode | null {
+    let left = this.primary(tokenReader);
+
+    let root: ASTNode | null = left;
+    if (left) {
+      while (true) {
+        const peekToken = tokenReader.peek();
+        if (peekToken && peekToken.type === DfaState.Star) {
+          tokenReader.read();
+          const right = this.primary(tokenReader);
+
+          if (right) {
+            const node = new ASTNode(ASTNodeType.MultiplicativeExpression);
+            node.addChild(left);
+            node.addChild(right);
+            root = node;
+            left = root;
+          } else {
+            throw new Error('乘法表达式解析失败!');
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    return root;
+  }
+
+  /**
    * 加法表达式处理
    *
    * @param {TokenReader} tokenReader
    * @return {*}
    * @memberof AST
    */
-  additive(tokenReader: TokenReader): any {
-    let left = this.primary(tokenReader);
+  additive(tokenReader: TokenReader): ASTNode | null {
+    let left = this.multiplicative(tokenReader);
 
     let root: ASTNode | null = left;
     if (left) {
@@ -114,7 +150,7 @@ export class AST {
         if (peekToken && peekToken.type === DfaState.Plus) {
           const node = new ASTNode(ASTNodeType.AdditiveExpression);
           tokenReader.read();
-          const right = this.primary(tokenReader);
+          const right = this.multiplicative(tokenReader);
 
           if (right) {
             node.addChild(left);

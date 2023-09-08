@@ -1,7 +1,7 @@
 import { tokenize } from '../token2';
 import { AST } from './index';
 
-let str = '1 + 1 + 3 + 5 + 7;';
+let str = '1 + 1 + 3 + 5;';
 
 const tokens = tokenize(str);
 console.log(tokens);

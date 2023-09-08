@@ -80,24 +80,6 @@ export class AST {
   }
 
   /**
-   * 原子节点处理
-   *
-   * @param {TokenReader} tokenReader
-   * @return {*}
-   * @memberof AST
-   */
-  primary(tokenReader: TokenReader) {
-    const peekToken = tokenReader.peek();
-    if (peekToken) {
-      if (peekToken.type === DfaState.IntLiteral) {
-        const token = tokenReader.read();
-        return new ASTNode(ASTNodeType.IntLiteral, token.text);
-      }
-    }
-    return null;
-  }
-
-  /**
    * 加法表达式处理
    *
    * @param {TokenReader} tokenReader
@@ -105,16 +87,26 @@ export class AST {
    * @memberof AST
    */
   additive(tokenReader: TokenReader) {
-    let child1 = this.primary(tokenReader);
+    let child1;
+    const peekToken = tokenReader.peek();
+    if (peekToken && peekToken.type === DfaState.IntLiteral) {
+      const token = tokenReader.read();
+      child1 = new ASTNode(ASTNodeType.IntLiteral, token.text);
+    }
 
     if (child1) {
       const peekToken = tokenReader.peek();
       if (peekToken && peekToken.type === DfaState.Plus) {
-        const node = new ASTNode(ASTNodeType.AdditiveExpression);
         tokenReader.read();
-        const child2 = this.primary(tokenReader);
+        let child2;
+        const peekToken = tokenReader.peek();
+        if (peekToken && peekToken.type === DfaState.IntLiteral) {
+          const token = tokenReader.read();
+          child2 = new ASTNode(ASTNodeType.IntLiteral, token.text);
+        }
 
         if (child2) {
+          const node = new ASTNode(ASTNodeType.AdditiveExpression);
           node.addChild(child1);
           node.addChild(child2);
           child1 = node;

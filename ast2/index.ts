@@ -88,11 +88,9 @@ export class AST {
    */
   primary(tokenReader: TokenReader) {
     const peekToken = tokenReader.peek();
-    if (peekToken) {
-      if (peekToken.type === DfaState.IntLiteral) {
-        const token = tokenReader.read();
-        return new ASTNode(ASTNodeType.IntLiteral, token.text);
-      }
+    if (peekToken && peekToken.type === DfaState.IntLiteral) {
+      const token = tokenReader.read();
+      return new ASTNode(ASTNodeType.IntLiteral, token.text);
     }
     return null;
   }
@@ -113,7 +111,7 @@ export class AST {
       if (peekToken && peekToken.type === DfaState.Plus) {
         const node = new ASTNode(ASTNodeType.AdditiveExpression);
         tokenReader.read();
-        const right = this.primary(tokenReader);
+        const right = this.additive(tokenReader);
 
         if (right) {
           node.addChild(left);
